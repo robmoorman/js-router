@@ -1,0 +1,67 @@
+<!doctype html>
+<html>
+<head>
+	<title>Native sample</title>
+	<script src="../../router.js"></script>
+	<script>
+		function onPage( payload )
+		{
+			setPayloadAsOutput( payload )
+		};
+		
+		function onPageNotFound()
+		{
+			document.getElementById( "output" ).innerHTML = "Page not found!";
+		};
+		
+		function onPageWithSubpage( payload )
+		{
+			setPayloadAsOutput( payload )
+		};
+		
+		function setPayloadAsOutput( payload )
+		{
+			var el = document.getElementById( "output" );
+			el.innerHTML = "<strong>Payload properties:</strong><br />"
+			
+			for( var prop in payload )
+			{
+				el.innerHTML += prop + ": " + payload[ prop ] + "<br />"
+			}
+		};
+		
+		var router = new Router( onPage, onPageNotFound );
+		router.addRoute().addPath( "just-a-page" );
+		router.addRoute( onPageWithSubpage ).addPath( "just-a-page", "page" ).addPath( null, "subpage" );
+		router.activate();
+		
+		if( "onhashchange" in window )
+		{
+			window.onhashchange = function()
+			{
+				var pathNames = location.hash.replace( "#", "" ).split( "/" );
+				
+				while( pathNames.indexOf( "" ) != -1 )
+				{
+					pathNames.splice( pathNames.indexOf( "" ), 1 );
+				}
+				
+				router.triggerRoutes( pathNames );
+			};
+		}
+		else
+		{
+			alert( "Your browser doesn\'t support the hashchange event! ");
+		}
+	</script>
+</head>
+<body>
+	<h1>Native sample</h1>
+	<ul>
+		<li><a href="#/just-a-page/">Just a page</a></li>
+		<li><a href="#/just-a-page/with-subpage/">Just a page with subpage</a></li>
+		<li><a href="#/unknown/page/">Unknown page</a></li>
+	</ul>
+	<p id="output"></p>
+</body>
+</html>
