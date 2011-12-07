@@ -1,0 +1,33 @@
+<project name="application" basedir="." default="default">
+	
+	<property environment="env" />
+		
+	<target name="default">
+		<antcall target="compress-js" />
+		<antcall target="run-qunit" />
+	</target>
+	
+	<target name="compress-js">
+		<concat destfile="./bin/router.js">
+			<fileset dir="./src/nl/moori/router" includes="Router.js" />
+			<fileset dir="./src/nl/moori/router" includes="Route.js" />
+			<fileset dir="./src/nl/moori/router" includes="Pattern.js" />
+		</concat>
+		<exec executable="java">
+			<arg line="-jar ./libs/yuicompressor-2.4.7.jar" />
+			<arg line="--type js" />
+			<arg line="-o ./bin/router-min.js" />
+			<arg line="./bin/router.js" />
+		</exec>
+	</target>
+	
+	<target name="run-qunit">
+		<concat destfile="./tests/bin/qunit-suite.js">
+			<fileset dir="./tests/src" includes="**/*.js" />
+		</concat>
+		<exec executable="open">
+			<arg value="./tests/bin/testrunner.html" />
+		</exec>
+	</target>
+	
+</project>
